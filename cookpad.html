@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>献立提案アプリ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    input {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      margin-left: 8px;
+    }
+    .meal {
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      padding: 10px;
+      max-width: 400px;
+    }
+    img {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>冷蔵庫の材料でレシピ提案！</h1>
+  <p>食材をカンマ（,）で区切って日本語で入力してください（例：卵, にんじん, トマト）</p>
+  <input type="text" id="ingredients" placeholder="例：卵, にんじん, トマト">
+  <button onclick="searchRecipe()">レシピ検索</button>
+  <div id="results"></div>
+
+  <script>
+    // 日本語→英語の食材変換辞書
+    const translationMap = {
+      "卵": "egg",
+      "鶏肉": "chicken",
+      "豚肉": "pork",
+      "牛肉": "beef",
+      "にんじん": "carrot",
+      "玉ねぎ": "onion",
+      "じゃがいも": "potato",
+      "トマト": "tomato",
+      "キャベツ": "cabbage",
+      "ピーマン": "bell pepper"
+    };
+
+    // 日本語の食材を英語に変換
+    function translateIngredients(japaneseList) {
+      return japaneseList
+        .split(",")
+        .map(word => word.trim())
+        .map(word => translationMap[word] || word)
+        .join(",");
+    }
+
+    // レシピ検索
+    function searchRecipe() {
+      const japaneseInput = document.getElementById('ingredients').value;
+      const input = translateIngredients(japaneseInput);
+      const url = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(input)}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.innerHTML = '';
+
+          if (data.meals) {
+            data.meals.forEach(meal => {
+              const mealDiv = document.createElement('div');
+              mealDiv.className = 'meal';
+              mealDiv.innerHTML = `
+                <h3>${meal.strMeal}</h3>
+                <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                <p><a href="https://www.themealdb.com/meal.php?c=${meal.idMeal}" target="_blank">レシピを見る</a></p>
+              `;
+              resultsDiv.appendChild(mealDiv);
+            });
+          } else {
+            resultsDiv.innerHTML = '該当するレシピが見つかりませんでした。';
+          }
+        });
+    }
+  </script>
+</body>
+</html>
