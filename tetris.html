@@ -5,12 +5,7 @@
   <title>テトリス</title>
   <style>
     canvas {
-      <div id="controls" style="text-align:center; margin-top: 10px;">
-  <button onclick="handleInput('left')">←</button>
-  <button onclick="handleInput('rotate')">⟳</button>
-  <button onclick="handleInput('right')">→</button>
-  <button onclick="handleInput('down')">↓</button>
-</div>
+     
       background:#111;
       display: block;
       margin: 0 auto;
@@ -26,6 +21,12 @@
 </head>
 <body>
   <canvas id="tetris" width="200" height="400"></canvas>
+   <div id="controls" style="text-align:center; margin-top: 10px;">
+  <button onclick="handleInput('left')">←</button>
+  <button onclick="handleInput('rotate')">⟳</button>
+  <button onclick="handleInput('right')">→</button>
+  <button onclick="handleInput('down')">↓</button>
+</div>
   <div style="text-align: center; color: rgb(255, 0, 0); font-size: 20px;">
     スコア: <span id="score">0</span>
   </div>
