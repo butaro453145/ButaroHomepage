@@ -260,6 +260,18 @@ function arenaSweep() {
   function updateScore() {
     document.getElementById('score').innerText = player.score;
   }   
+  
+  function handleInput(command) {
+  if (command === 'left') {
+    playerMove(-1);
+  } else if (command === 'right') {
+    playerMove(1);
+  } else if (command === 'down') {
+    playerDrop();
+  } else if (command === 'rotate') {
+    playerRotate(1); // ←回転方向（右回転）
+  }
+}
 
 let dropCounter = 0;
 let dropInterval = 1000;
