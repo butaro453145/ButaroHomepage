@@ -12,6 +12,25 @@
       margin: 0 auto;
     }
   </style>
+  <style>
+  #controls {
+    touch-action: manipulation; /* ←これでズーム系ジェスチャーを無効化！ */
+  }
+
+  #controls button {
+    font-size: 24px;
+    margin: 5px;
+    padding: 10px 20px;
+    user-select: none;     /* テキスト選択防止 */
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  html, body {
+    touch-action: manipulation;  /* ページ全体にも適用してもOK */
+    overscroll-behavior: contain; /* スクロール外挙動も抑制できる */
+  }
+</style>
 
 </head>
 <body>
