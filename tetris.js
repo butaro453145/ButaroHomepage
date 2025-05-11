@@ -194,29 +194,7 @@ function playerRotate(dir = 1) {
   }
 }
   
-  m.forEach(row => row.reverse());
-  const pos = player.pos.x;
-  let offset = 1;
-  lastKickOffset=0;
-  while (collide(arena, player)) {
-    player.pos.x += offset;
-    lastKickOffset = offset; // ←★ ズレを記録！
-    offset = -(offset + (offset > 0 ? 1 : -1));
-
-    if (Math.abs(offset) > m[0].length) {
-      // 元に戻す
-      for (let y = 0; y < m.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-          [m[x][y], m[y][x]] = [m[y][x], m[x][y]];
-        }
-      }
-      m.forEach(row => row.reverse());
-      player.pos.x = pos;
-      lastKickOffset = 0;
-      return;
-    }
-  }
-    
+  
   
   const rightLimit = arena[0].length - player.matrix[0].length;
   if (player.pos.x > rightLimit) {
