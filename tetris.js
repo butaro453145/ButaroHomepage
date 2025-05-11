@@ -163,13 +163,38 @@ function playerMove(dir) {
   }
 }
 
-function playerRotate(dir = 1) {
-  const m = player.matrix;
-  for (let y = 0; y < m.length; ++y) {
+function rotateMatrix(matrix, dir) {
+  for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < y; ++x) {
-      [m[x][y], m[y][x]] = [m[y][x], m[x][y]];
+      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
     }
   }
+  if (dir > 0) {
+    matrix.forEach(row => row.reverse());
+  } else {
+    matrix.reverse();
+  }
+}
+
+function playerRotate(dir = 1) {
+  const pos = player.pos.x;
+  let offset = 1;
+
+  rotateMatrix(player.matrix, dir);
+
+  while (collide(arena, player)) {
+    player.pos.x += offset;
+    offset = -(offset + (offset > 0 ? 1 : -1));
+
+    if (Math.abs(offset) > player.matrix[0].length) {
+      // 回転戻して位置戻す
+      rotateMatrix(player.matrix, -dir);
+      player.pos.x = pos;
+      return;
+    }
+  }
+}
+  
   m.forEach(row => row.reverse());
   const pos = player.pos.x;
   let offset = 1;
