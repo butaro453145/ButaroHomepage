@@ -187,7 +187,7 @@ function playerRotate(dir = 1) {
     offset = -(offset + (offset > 0 ? 1 : -1));
 
     if (Math.abs(offset) > player.matrix[0].length) {
-      // 回転戻して位置戻す
+      // 回転を元に戻す
       rotateMatrix(player.matrix, -dir);
       player.pos.x = pos;
       return;
