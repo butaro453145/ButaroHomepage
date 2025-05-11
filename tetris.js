@@ -144,18 +144,6 @@ function collide(matrix, piece) {
   return false;
 }
 
-
-  
-function playerDrop() {
-  player.pos.y++;
-  if (collide(arena, player)) {
-    player.pos.y--;
-    merge(arena, player);
-    playerReset();
-  }
-  dropCounter = 0;
-}
-
 function playerMove(dir) {
   player.pos.x += dir;
   if (collide(arena, player)) {
