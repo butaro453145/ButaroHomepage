@@ -164,13 +164,11 @@ function playerMove(dir) {
 }
 
 function rotateMatrix(matrix, dir) {
-  // 転置
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < y; ++x) {
       [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
     }
   }
-  // 回転方向に応じて反転
   if (dir > 0) {
     matrix.forEach(row => row.reverse());
   } else {
@@ -182,16 +180,13 @@ function playerRotate(dir = 1) {
   const pos = player.pos.x;
   let offset = 1;
 
-  // 回転
   rotateMatrix(player.matrix, dir);
 
-  // 衝突している間は左右にずらしてみる
   while (collide(arena, player)) {
     player.pos.x += offset;
-    offset = -(offset + (offset > 0 ? 1 : -1)); // +1, -2, +3, -4...
+    offset = -(offset + (offset > 0 ? 1 : -1));
 
     if (Math.abs(offset) > player.matrix[0].length) {
-      // 無理だったら回転を元に戻す
       rotateMatrix(player.matrix, -dir);
       player.pos.x = pos;
       return;
