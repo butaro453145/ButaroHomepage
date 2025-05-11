@@ -171,7 +171,7 @@ function playerRotate(dir = 1) {
     }
   }
   m.forEach(row => row.reverse());
-  const pos = palayer.pos.x;
+  const pos = player.pos.x;
   let offset = 1;
   lastKickOffset=0;
   while (collide(arena, player)) {
