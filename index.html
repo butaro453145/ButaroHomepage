@@ -2,38 +2,123 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ぶうたろうのHP</title>
-  <link rel="stylesheet" href="style.css">
+  <title>がんばれぶうたろうくん公式HP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Press Start 2P', cursive;
+      background-color: #111;
+      color: #eee;
+      text-align: center;
+    }
+
+    header {
+      padding: 30px 10px;
+      background: #222;
+      border-bottom: 4px solid #00ffff;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #222;
+      border: 2px solid #00ffff;
+      border-radius: 8px;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 500px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      background: #00ffff;
+      color: #000;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    section#projects {
+      background-color: #1a1f33;
+      border-top: 3px solid #00ffff;
+      border-bottom: 3px solid #00ffff;
+      padding: 40px 20px;
+    }
+
+    section#profile {
+      background-color: #162c1f;
+      border-top: 3px solid #00ff7f;
+      border-bottom: 3px solid #00ff7f;
+      padding: 40px 20px;
+    }
+
+    footer {
+      padding: 20px;
+      background: #222;
+      color: #999;
+      font-size: 12px;
+    }
+
+    @media screen and (max-width: 600px) {
+      header h1 {
+        font-size: 14px;
+      }
+      h2 {
+        font-size: 12px;
+      }
+      a {
+        font-size: 10px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>がんばれぶうたろうくん公式HP</h1>
+    <h1>がんばれぶうたろうくん 公式HP</h1>
     <p>Unityでゲームを作っています</p>
   </header>
 
-  <section>
-    <h2>作品紹介</h2>
+  <section id="projects">
+    <h2>▶ 作品紹介</h2>
     <ul>
       <li>
         <h3>無限ランナー</h3>
         <p>Unityで作った2Dアクションゲームです。</p>
-        <a href="web/index.html">▶ 制作中
-        </a>
+        <a href="web/index.html">▶ 制作中</a>
       </li>
-      <h3>残り物献立アプリ</h3>
-      <p>材料を入力すると、料理を提案してくれます。
-      </p>
-      <a href="cookpad.html">▶ あそぶ</a>
-      <h3>テトリス</h3>
-      <p>テトリスです</p>
-      <a href="tetris.html">▶ あそぶ</a>
+      <li>
+        <h3>残り物献立アプリ</h3>
+        <p>材料を入力すると、料理を提案してくれます。</p>
+        <a href="cookpad.html">▶ あそぶ</a>
+      </li>
+      <li>
+        <h3>テトリス</h3>
+        <p>テトリスです</p>
+        <a href="tetris.html">▶ あそぶ</a>
+      </li>
     </ul>
   </section>
 
-  <section>
-    <h2>プロフィール</h2>
+  <section id="profile">
+    <h2>▶ プロフィール</h2>
     <p>ゲームが好きな一般学生です。</p>
-    <p></p>
   </section>
 
   <footer>
