@@ -192,10 +192,7 @@ function playerRotate(dir = 1) {
       return;
     }
   }
-}
-  
-  
-  
+
   const rightLimit = arena[0].length - player.matrix[0].length;
   if (player.pos.x > rightLimit) {
     player.pos.x = rightLimit;
@@ -203,7 +200,6 @@ function playerRotate(dir = 1) {
   if (player.pos.x < 0) {
     player.pos.x = 0;
   }
-  // ←★ ここまで
 }
 
 
