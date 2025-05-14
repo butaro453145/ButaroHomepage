@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>競馬レース（得意馬場バフあり）</title>
+  <style>
+    .history {
+      margin-left: 20px;
+      font-size: 0.9em;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="raceTitle"></h1>
+  <p>距離: <span id="raceDistance"></span>m　馬場: <span id="raceSurface"></span></p>
+  <p>所持金: <span id="money">1000</span>円</p>
+
+  <!-- 予想入力エリア -->
+  <div>
+    <label>賭ける馬：</label>
+    <select id="horseSelect"></select>
+    <label>賭け金：</label>
+    <input type="number" id="betAmount" value="100" min="1">
+    <button onclick="startRace()">レース開始！</button>
+  </div>
+
+  <h2>出走馬</h2>
+  <ul id="horseList"></ul>
+
+  <h2>レース結果</h2>
+  <ol id="raceResult"></ol>
+  <p id="resultMessage"></p>
+
+  <script>
+    // 毎回ランダムで選ばれるレース一覧（距離・馬場）
+    const raceList = [
+      { name: "東京記念", distance: 1600, surface: "芝" },
+      { name: "中山ダートカップ", distance: 1800, surface: "ダート" },
+      { name: "阪神スプリント", distance: 1200, surface: "芝" },
+      { name: "京都ロングラン", distance: 2000, surface: "芝" },
+      { name: "札幌ステークス", distance: 1700, surface: "ダート" }
+    ];
+
+    let currentRace = {}; // 現在のレース設定（毎回変更）
+
+    // 登録されている馬たち
+    const allHorses = [
+      {
+        id: 1, name: "サンダーブレード", bestDistance: 1600, favoriteSurface: "芝",
+        stats: { speed: 85, stamina: 70, power: 80 }, history: []
+      },
+      {
+        id: 2, name: "ミラクルウィン", bestDistance: 1800, favoriteSurface: "ダート",
+        stats: { speed: 70, stamina: 80, power: 65 }, history: []
+      },
+      // 以下同様に馬を追加...
+      {
+        id: 3, name: "ダークフェザー", bestDistance: 1400, favoriteSurface: "芝",
+        stats: { speed: 90, stamina: 60, power: 60 }, history: []
+      },
+      {
+        id: 4, name: "スピードスター", bestDistance: 1600, favoriteSurface: "芝",
+        stats: { speed: 88, stamina: 65, power: 70 }, history: []
+      },
+      {
+        id: 5, name: "パワーブレイク", bestDistance: 2000, favoriteSurface: "ダート",
+        stats: { speed: 60, stamina: 75, power: 90 }, history: []
+      },
+      {
+        id: 6, name: "レッドサンダー", bestDistance: 1600, favoriteSurface: "芝",
+        stats: { speed: 80, stamina: 75, power: 75 }, history: []
+      },
+      {
+        id: 7, name: "シャドウウィッシュ", bestDistance: 1200, favoriteSurface: "芝",
+        stats: { speed: 95, stamina: 50, power: 55 }, history: []
+      },
+      {
+        id: 8, name: "クリスタルソウル", bestDistance: 1600, favoriteSurface: "ダート",
+        stats: { speed: 78, stamina: 70, power: 72 }, history: []
+      },
+      {
+        id: 9, name: "フロストブレイク", bestDistance: 1800, favoriteSurface: "芝",
+        stats: { speed: 82, stamina: 78, power: 80 }, history: []
+      },
+      {
+        id: 10, name: "ホワイトレイン", bestDistance: 1600, favoriteSurface: "芝",
+        stats: { speed: 84, stamina: 68, power: 65 }, history: []
+      }
+    ];
+
+    let raceHorses = []; // 今回出走する8頭
+    let playerMoney = 1000; // 所持金（ゲーム内通貨）
+
+    // HTML要素の参照を取得
+    const horseList = document.getElementById("horseList");
+    const raceResult = document.getElementById("raceResult");
+    const horseSelect = document.getElementById("horseSelect");
+    const moneyDisplay = document.getElementById("money");
+    const resultMessage = document.getElementById("resultMessage");
+
+    // レース情報をランダムに選ぶ
+    function selectRandomRace() {
+      currentRace = raceList[Math.floor(Math.random() * raceList.length)];
+      document.getElementById("raceTitle").textContent = currentRace.name;
+      document.getElementById("raceDistance").textContent = currentRace.distance;
+      document.getElementById("raceSurface").textContent = currentRace.surface;
+    }
+
+    // 馬をランダムで8頭選出
+    function getRandomHorses(list, count = 8) {
+      return list.slice().sort(() => Math.random() - 0.5).slice(0, count);
+    }
+
+    // 各馬のスコアを計算（能力＋得意距離＋得意馬場＋運）
+    function calculateHorseScore(horse) {
+      const { speed, stamina, power } = horse.stats;
+
+      // 能力に基づく基本スコア
+      const baseScore = speed * 0.5 + stamina * 0.3 + power * 0.2;
+
+      // 馬場適性による補正
+      let surfaceBonus = 1.0;
+      if (currentRace.surface === "芝") surfaceBonus += 0.05 * (speed / 100);
+      if (currentRace.surface === "ダート") surfaceBonus += 0.05 * (power / 100);
+
+      // 得意馬場なら追加バフ
+      if (horse.favoriteSurface === currentRace.surface) {
+        surfaceBonus += 0.1; // さらに10%強化
+      }
+
+      // 距離適性による補正（近ければ高く、離れると低下）
+      const distanceDiff = Math.abs(currentRace.distance - horse.bestDistance);
+      const distanceBonus = 1.0 - (distanceDiff / 1000);
+
+      // ランダム要素（運）
+      const luck = Math.random() * 30;
+
+      // 総合スコア
+      return baseScore * surfaceBonus * distanceBonus + luck;
+    }
+
+    // 馬一覧を表示（クリックで履歴確認可能）
+    function displayHorseList() {
+      raceHorses = getRandomHorses(allHorses, 8);
+      horseList.innerHTML = "";
+      horseSelect.innerHTML = "";
+
+      raceHorses.forEach(horse => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong style="cursor:pointer">${horse.name}</strong>`;
+        li.onclick = () => {
+          alert(
+            horse.history.length
+              ? horse.history.map(h => `・${h.date} ${h.raceName} (${h.distance}m ${h.surface})：${h.rank}着`).join('\n')
+              : "過去の出走履歴はありません。"
+          );
+        };
+        horseList.appendChild(li);
+
+        const opt = document.createElement("option");
+        opt.value = horse.id;
+        opt.text = horse.name;
+        horseSelect.appendChild(opt);
+      });
+    }
+
+    // レース開始処理
+    function startRace() {
+      const selectedId = parseInt(horseSelect.value);
+      const bet = parseInt(document.getElementById("betAmount").value);
+
+      // 賭け金のバリデーション
+      if (isNaN(bet) || bet <= 0 || bet > playerMoney) {
+        alert("正しい賭け金を入力してください");
+        return;
+      }
+
+      // 各馬のスコアを計算 → 降順ソートで順位を決定
+      const scored = raceHorses.map(horse => ({
+        horse,
+        score: calculateHorseScore(horse)
+      }));
+      scored.sort((a, b) => b.score - a.score);
+
+      // 結果表示
+      raceResult.innerHTML = "";
+      scored.forEach((entry, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${entry.horse.name}`;
+        raceResult.appendChild(li);
+
+        // 履歴に追加
+        entry.horse.history.push({
+          date: new Date().toISOString().split("T")[0],
+          raceName: currentRace.name,
+          distance: currentRace.distance,
+          surface: currentRace.surface,
+          rank: i + 1
+        });
+      });
+
+      // 的中判定と所持金の更新
+      const winner = scored[0].horse;
+      if (winner.id === selectedId) {
+        const payout = bet * 3;
+        playerMoney += payout;
+        resultMessage.textContent = `的中！1着は「${winner.name}」！ +${payout}円`;
+      } else {
+        playerMoney -= bet;
+        resultMessage.textContent = `はずれ… 1着は「${winner.name}」でした -${bet}円`;
+      }
+
+      // 所持金表示更新
+      moneyDisplay.textContent = playerMoney;
+
+      // 次のレースに更新
+      selectRandomRace();
+      displayHorseList();
+    }
+
+    // 初期表示処理
+    selectRandomRace();
+    displayHorseList();
+  </script>
+</body>
+</html>
